@@ -8,7 +8,7 @@ import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 
 import Mill from './mill';
 
-extend({ OrbitControls });
+extend({ OrbitControls, OutlinePass });
 
 // 1. Canvas
 
@@ -38,45 +38,57 @@ const Controls = () => {
     );
 };
 
-function Effect() {
-    const composer = React.useRef();
-    const { scene, gl, size, camera } = useThree();
-    const aspect = React.useMemo(
-        () => new THREE.Vector2(size.width, size.height),
-        [size],
-    );
-    React.useEffect(
-        () => void composer.current.setSize(size.width, size.height),
-        [size],
-    );
-    useFrame(() => composer.current.render(), 1);
-    return (
-        <effectComposer ref={composer} args={[gl]}>
-            <renderPass
-                attachArray="passes"
-                scene={scene}
-                camera={camera}
-                antialias={true}
-            />
-            <unrealBloomPass attachArray="passes" args={[aspect, 1, 1, 0]} />
-        </effectComposer>
-    );
-}
+// function Effect() {
+//     const composer = React.useRef();
+//     const { scene, gl, size, camera } = useThree();
+//     const aspect = React.useMemo(
+//         () => new THREE.Vector2(size.width, size.height),
+//         [size],
+//     );
+//     React.useEffect(
+//         () => void composer.current.setSize(size.width, size.height),
+//         [size],
+//     );
+//     useFrame(() => composer.current.render(), 1);
+//     return (
+//         <effectComposer ref={composer} args={[gl]}>
+//             <renderPass
+//                 attachArray="passes"
+//                 scene={scene}
+//                 camera={camera}
+//                 antialias={true}
+//             />
+//             <unrealBloomPass attachArray="passes" args={[aspect, 1, 1, 0]} />
+//             <outlinePass
+//                 attachArray="passes"
+//                 args={[aspect, scene, camera]}
+//                 // selectedObjects={hovered}
+//                 visibleEdgeColor="white"
+//                 edgeStrength={50}
+//                 edgeThickness={5}
+//                 edgeGlow={10}
+//                 hiddenEdgeColor="#000000"
+//             />
+//         </effectComposer>
+//     );
+// }
 
 const Scratch = () => {
     return (
         <Canvas
             camera={{
                 fov: 75,
-                position: [0.1, -0.1, 0.1],
+                position: [0.5, -0.5, 0.5],
             }}
             style={{ background: '#000' }}
         >
-            <Suspense fallback={null}>
-                <Mill />
-            </Suspense>
-            <Controls />
-            <Effect />
+            <scene>
+                <Suspense fallback={null}>
+                    <Mill />
+                </Suspense>
+                <Controls />
+                {/* <Effect /> */}
+            </scene>
         </Canvas>
     );
 };
