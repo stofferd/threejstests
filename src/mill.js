@@ -38,7 +38,7 @@ function Effect() {
             <shaderPass
                 attachArray="passes"
                 args={[SobelOperatorShader]}
-                // uniforms-resolution-value={[1 / size.width, 1 / size.height]}
+                color="0x00ff00"
                 uniforms-resolution-value={[
                     window.innerWidth * window.devicePixelRatio,
                     window.innerHeight * window.devicePixelRatio,
@@ -56,13 +56,14 @@ export default function Model(props) {
     return (
         <group ref={groupRef} {...props} dispose={null}>
             <spotLight
-                intensity={1.1}
+                intensity={0.1}
                 fov={75}
                 position={[0.1, -0.1, 1]}
                 penumbra={1}
+                color="0xff0000"
             />
-            <ambientLight intensity={0.01} />
 
+            <ambientLight intensity={0.9} color="0xff0000" />
             <mesh
                 material={new MeshLambertMaterial({ color: '0x000000' })}
                 geometry={nodes.pCube1.geometry}
