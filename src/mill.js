@@ -6,20 +6,12 @@ import * as THREE from 'three';
 import React, { useRef } from 'react';
 import { useLoader, useFrame, useThree, extend } from 'react-three-fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import {
-    MeshBasicMaterial,
-    MeshLambertMaterial,
-    LineBasicMaterial,
-    MeshPhongMaterial,
-} from 'three';
+import { MeshLambertMaterial } from 'three';
 import logoUrl from './mill7.gltf';
-import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { WireframeGeometry2 } from 'three/examples/jsm/lines/WireframeGeometry2.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
+import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader';
 
-extend({ OutlinePass });
-
-function Effect({ selectedObjects }) {
+function Effect() {
     const composer = React.useRef();
     const { scene, gl, size, camera } = useThree();
     const aspect = React.useMemo(
@@ -31,6 +23,9 @@ function Effect({ selectedObjects }) {
         [size],
     );
     useFrame(() => composer.current.render(), 1);
+    console.log(window.innerWidth);
+    console.log(window.devicePixelRatio);
+    console.log(window.innerHeight);
     return (
         <effectComposer ref={composer} args={[gl]}>
             <renderPass
@@ -39,16 +34,16 @@ function Effect({ selectedObjects }) {
                 camera={camera}
                 antialias={true}
             />
-            {/* <unrealBloomPass attachArray="passes" args={[aspect, 1, 1, 0]} /> */}
-            <outlinePass
+            <unrealBloomPass attachArray="passes" args={[aspect, 1, 1, 0]} />
+            <shaderPass
                 attachArray="passes"
-                args={[aspect, scene, camera]}
-                selectedObjects={selectedObjects}
-                visibleEdgeColor="white"
-                edgeStrength={50}
-                edgeThickness={10}
-                edgeGlow={10}
-                hiddenEdgeColor="#000000"
+                args={[SobelOperatorShader]}
+                // uniforms-resolution-value={[1 / size.width, 1 / size.height]}
+                uniforms-resolution-value={[
+                    window.innerWidth * window.devicePixelRatio,
+                    window.innerHeight * window.devicePixelRatio,
+                ]}
+                renderToScreen
             />
         </effectComposer>
     );
@@ -57,27 +52,6 @@ function Effect({ selectedObjects }) {
 export default function Model(props) {
     const groupRef = useRef();
     const { nodes } = useLoader(GLTFLoader, logoUrl);
-
-    // const edges1 = new THREE.EdgesGeometry(nodes.pCube1.geometry);
-    // const edges2 = new THREE.EdgesGeometry(nodes.pasted__pCube1.geometry);
-    // const edges3 = new THREE.EdgesGeometry(nodes.pCone1.geometry);
-
-    var edges1 = new WireframeGeometry2(nodes.pCube1.geometry);
-    var edges2 = new WireframeGeometry2(nodes.pasted__pCube1.geometry);
-    var edges3 = new WireframeGeometry2(nodes.pCone1.geometry);
-
-    console.log({ edges1 });
-    console.log({ edges2 });
-    console.log({ edges3 });
-    console.log(Object.values(nodes));
-
-    // const lineMaterial = new LineBasicMaterial({ color: 'red', linewidth: 1 });
-
-    const lineMaterial = new LineMaterial({
-        color: 0xffff00,
-        linewidth: 10, // in pixels
-    });
-    lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
 
     return (
         <group ref={groupRef} {...props} dispose={null}>
@@ -90,29 +64,7 @@ export default function Model(props) {
             <ambientLight intensity={0.01} />
 
             <mesh
-                material={lineMaterial}
-                geometry={edges1}
-                position={[0, 0.1, 0]}
-                rotation={[0.72, 0, 0]}
-                scale={[1.3, 27.13, 5.01]}
-            />
-            <mesh
-                material={lineMaterial}
-                geometry={edges2}
-                position={[0.01, 0.1, 0]}
-                rotation={[2.43, 0, 0]}
-                scale={[1.3, 27.13, 5.01]}
-            />
-            <mesh
-                material={lineMaterial}
-                geometry={edges3}
-                position={[0, 0, 0]}
-                scale={[10.61, 6.25, 10.97]}
-            />
-
-            <mesh
                 material={new MeshLambertMaterial({ color: '0x000000' })}
-                // material={testMaterial}
                 geometry={nodes.pCube1.geometry}
                 position={[0, 0.1, 0]}
                 rotation={[0.72, 0, 0]}
@@ -120,7 +72,6 @@ export default function Model(props) {
             />
             <mesh
                 material={new MeshLambertMaterial({ color: '0x000000' })}
-                // material={testMaterial}
                 geometry={nodes.pasted__pCube1.geometry}
                 position={[0.01, 0.1, 0]}
                 rotation={[2.43, 0, 0]}
@@ -128,17 +79,11 @@ export default function Model(props) {
             />
             <mesh
                 material={new MeshLambertMaterial({ color: '0x000000' })}
-                // material={testMaterial}
                 geometry={nodes.pCone1.geometry}
                 position={[0, 0, 0]}
                 scale={[10.61, 6.25, 10.97]}
             />
-            <Effect
-                selectedObjects={
-                    // THREE.getObjectByName('pCube1')
-                    nodes && nodes[1] ? [nodes[1], nodes[2], nodes[3]] : []
-                }
-            />
+            <Effect />
         </group>
     );
 }
