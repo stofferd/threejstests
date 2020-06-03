@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import React, { Suspense } from 'react';
 import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 
 import Mill from './mill';

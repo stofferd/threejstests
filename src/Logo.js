@@ -1,20 +1,12 @@
 import * as THREE from 'three';
-import React, { Suspense } from 'react';
-import {
-    Canvas,
-    extend,
-    useFrame,
-    useThree,
-    useLoader,
-} from 'react-three-fiber';
+import React from 'react';
+import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import logoUrl from './lm2020.gltf';
 
 // Makes these prototypes available as "native" jsx-string elements
 extend({
