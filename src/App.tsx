@@ -8,6 +8,7 @@ import Logo from './Logo';
 import Scratch from './Scratch';
 import Terrain from './Terrain';
 import Globe from './Globe';
+import Knot from './Knot';
 
 function App() {
     return (
@@ -31,6 +32,9 @@ function App() {
                     </li>
                     <li>
                         <Link to="/globe">Globe</Link>
+                    </li>
+                    <li>
+                        <Link to="/knot">Knot</Link>
                     </li>
                     {/* <li>
                         <Link to="/ocean">Ocean</Link>
@@ -58,9 +62,9 @@ function App() {
                     <Route path="/globe">
                         <Globe />
                     </Route>
-                    {/* <Route path="/ocean">
-                        <Ocean />
-                    </Route> */}
+                    <Route path="/knot">
+                        <Knot />
+                    </Route>
                 </Switch>
             </div>
         </Router>
