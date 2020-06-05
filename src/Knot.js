@@ -16,6 +16,38 @@ import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
 
 extend({ TorusKnotBufferGeometry });
 
+function Effect() {
+    const composer = React.useRef();
+    const { scene, gl, size, camera } = useThree();
+    const aspect = React.useMemo(
+        () => new THREE.Vector2(size.width, size.height),
+        [size],
+    );
+    React.useEffect(
+        () => void composer.current.setSize(size.width, size.height),
+        [size],
+    );
+    useFrame(() => composer.current.render(), 1);
+
+    return (
+        <effectComposer ref={composer} args={[gl]}>
+            <renderPass
+                attachArray="passes"
+                scene={scene}
+                camera={camera}
+                antialias={true}
+            />
+            <unrealBloomPass
+                attachArray="passes"
+                args={[aspect]}
+                strength={3}
+                radius={0.1}
+                threshold={0.3}
+            />
+        </effectComposer>
+    );
+}
+
 const Controls = () => {
     const { camera, gl } = useThree();
     const ref = React.useRef();
@@ -46,10 +78,9 @@ const Knot = () => {
                 <torusKnotBufferGeometry attach="geometry" args={[0.6, 0.1]} />
                 <meshLambertMaterial
                     attach="material"
-                    color="red"
+                    color="#fff"
                     side={THREE.BackSide}
                     onBeforeCompile={(shader) => {
-                        console.log({ shader });
                         const token = '#include <begin_vertex>';
                         const customTransform = `
                             vec3 transformed = position + objectNormal*0.02;
@@ -64,11 +95,11 @@ const Knot = () => {
 
             <mesh scale={[1, 1, 1]}>
                 <torusKnotBufferGeometry attach="geometry" args={[0.6, 0.1]} />
-                <meshLambertMaterial attach="material" color="green" />
+                <meshLambertMaterial attach="material" color="#005500" />
             </mesh>
 
             <Controls />
-            {/*   <Effect /> */}
+            <Effect />
         </Canvas>
     );
 };
