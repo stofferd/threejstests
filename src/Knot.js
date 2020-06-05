@@ -44,6 +44,12 @@ function Effect() {
                 radius={0.1}
                 threshold={0.3}
             />
+            <shaderPass
+                attachArray="passes"
+                args={[FXAAShader]}
+                uniforms-resolution-value={[1 / size.width, 1 / size.height]}
+                renderToScreen
+            />
         </effectComposer>
     );
 }
