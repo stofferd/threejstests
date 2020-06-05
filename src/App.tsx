@@ -6,6 +6,8 @@ import Underwater from './Underwater';
 import Logo from './Logo';
 // import Ocean from './Ocean';
 import Scratch from './Scratch';
+import Terrain from './Terrain';
+import Globe from './Globe';
 
 function App() {
     return (
@@ -23,6 +25,12 @@ function App() {
                     </li>
                     <li>
                         <Link to="/scratch">Scratch</Link>
+                    </li>
+                    <li>
+                        <Link to="/terrain">Terrain</Link>
+                    </li>
+                    <li>
+                        <Link to="/globe">Globe</Link>
                     </li>
                     {/* <li>
                         <Link to="/ocean">Ocean</Link>
@@ -43,6 +51,12 @@ function App() {
                     </Route>
                     <Route path="/scratch">
                         <Scratch />
+                    </Route>
+                    <Route path="/terrain">
+                        <Terrain />
+                    </Route>
+                    <Route path="/globe">
+                        <Globe />
                     </Route>
                     {/* <Route path="/ocean">
                         <Ocean />
