@@ -40,7 +40,7 @@ function Effect() {
             <unrealBloomPass
                 attachArray="passes"
                 args={[aspect]}
-                strength={3}
+                strength={2}
                 radius={0.1}
                 threshold={0.3}
             />
@@ -74,8 +74,11 @@ const Knot = () => {
             <ambientLight intensity={0.2} color="yellow" />
             <spotLight intensity={1.2} position={[1, -1, 10]} />
 
-            <mesh scale={[1.01, 1.01, 1.01]}>
-                <torusKnotBufferGeometry attach="geometry" args={[0.6, 0.1]} />
+            <mesh scale={[1.001, 1.001, 1.001]}>
+                <torusKnotBufferGeometry
+                    attach="geometry"
+                    args={[0.6, 0.1, 128, 16]}
+                />
                 <meshLambertMaterial
                     attach="material"
                     color="#fff"
@@ -94,7 +97,10 @@ const Knot = () => {
             </mesh>
 
             <mesh scale={[1, 1, 1]}>
-                <torusKnotBufferGeometry attach="geometry" args={[0.6, 0.1]} />
+                <torusKnotBufferGeometry
+                    attach="geometry"
+                    args={[0.6, 0.1, 128, 16]}
+                />
                 <meshLambertMaterial attach="material" color="#005500" />
             </mesh>
 
