@@ -9,6 +9,7 @@ import Scratch from './Scratch';
 import Terrain from './Terrain';
 import Globe from './Globe';
 import Knot from './Knot';
+import WireframeGlow from './WireframeGlow';
 
 function App() {
     return (
@@ -36,9 +37,9 @@ function App() {
                     <li>
                         <Link to="/knot">Knot</Link>
                     </li>
-                    {/* <li>
-                        <Link to="/ocean">Ocean</Link>
-                    </li> */}
+                    <li>
+                        <Link to="/wireframe-glow">WireframeGlow</Link>
+                    </li>
                 </ul>
 
                 <hr />
@@ -64,6 +65,9 @@ function App() {
                     </Route>
                     <Route path="/knot">
                         <Knot />
+                    </Route>
+                    <Route path="/wireframe-glow">
+                        <WireframeGlow />
                     </Route>
                 </Switch>
             </div>

@@ -7,11 +7,13 @@ import {
     SphereBufferGeometry,
     MeshLambertMaterial,
     SphereGeometry,
+    MeshStandardMaterial,
 } from 'three';
 import React, { Suspense } from 'react';
 import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
+import noiseUrl from './noise.jpg';
 
 extend({
     OrbitControls,
@@ -21,6 +23,7 @@ extend({
     MeshPhongMaterial,
     SphereBufferGeometry,
     SphereGeometry,
+    MeshStandardMaterial,
 });
 
 function Effect() {
@@ -106,7 +109,13 @@ const Ball = () => {
                 // thetaStart={1}
                 // thetaLength={1}
             />
-            <meshBasicMaterial attach="material" color="lightblue" />
+            <meshStandardMaterial
+                attach="material"
+                color="#fff"
+                // bumpMap={new THREE.TextureLoader().load(noiseUrl)}
+                displacementMap={new THREE.TextureLoader().load(noiseUrl)}
+                displacementScale={0.5}
+            />
         </mesh>
     );
 };
@@ -124,8 +133,8 @@ const Globe = () => {
                 }}
                 style={{ background: '#000' }}
             >
-                <ambientLight intensity={2.2} color="red" />
-                <spotLight intensity={0.2} />
+                <ambientLight intensity={1.2} color="#fff" />
+                <spotLight intensity={1.5} />
 
                 <Ball />
                 {/* <edgesGeometry attach="geometry" args={geometry} /> */}

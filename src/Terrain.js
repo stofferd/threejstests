@@ -1,10 +1,21 @@
 import React from 'react';
 import * as THREE from 'three';
+import {
+    PlaneBufferGeometry,
+    MeshPhongMaterial,
+    MeshLambertMaterial,
+} from 'three';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import noise from './noise.jpg';
+import city from './landan.jpg';
 
-extend({ OrbitControls });
+extend({
+    OrbitControls,
+    PlaneBufferGeometry,
+    MeshPhongMaterial,
+    MeshLambertMaterial,
+});
 
 const Controls = () => {
     const { camera, gl } = useThree();
@@ -27,24 +38,34 @@ const Terrain = () => {
         <Canvas
             camera={{
                 fov: 75,
-                position: [0, 0, 1],
+                position: [1, 0, 1],
             }}
             style={{ background: '#000' }}
         >
-            <ambientLight intensity={0.5} />
-
-            <mesh
-                material={
-                    new THREE.MeshPhongMaterial({
-                        color: 'red',
-                        normalMap: bumpMap,
-                    })
-                }
-                geometry={new THREE.PlaneBufferGeometry()}
-                position={[0, 0.1, 0]}
-                rotation={[0.72, 0, 0]}
-                scale={[1.3, 27.13, 5.01]}
+            <ambientLight color="#fff" intensity={0.8} />
+            <spotLight
+                castShadow={true}
+                color="#fff"
+                intensity={1.5}
+                position={[0.1, 1, 1]}
+                rot
             />
+
+            <mesh>
+                <planeBufferGeometry
+                    attach="geometry"
+                    args={[1, 0.5, 128, 128]}
+                />
+                <meshLambertMaterial
+                    attach="material"
+                    // color="brown"
+                    bumpMap={new THREE.TextureLoader().load(city)}
+                    bumpScale={0.1}
+                    map={new THREE.TextureLoader().load(city)}
+                    // displacementMap={new THREE.TextureLoader().load(noise)}
+                    // displacementScale={0.05}
+                />
+            </mesh>
             <Controls />
         </Canvas>
     );
