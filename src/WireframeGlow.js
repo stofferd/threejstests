@@ -53,9 +53,9 @@ function Effect() {
             <unrealBloomPass
                 attachArray="passes"
                 args={[aspect]}
-                strength={1.5}
-                radius={0.1}
-                threshold={0.3}
+                strength={2.5}
+                radius={0.3}
+                threshold={0.1}
             />
             {/* <shaderPass
                 attachArray="passes"
@@ -63,7 +63,12 @@ function Effect() {
                 uniforms-resolution-value={[1 / size.width, 1 / size.height]}
                 renderToScreen
             /> */}
-            <filmPass attachArray="passes" args={[0.25, 0.4, 1500, false]} />
+
+            <filmPass attachArray="passes" args={[0.25, 1, 1500, false]} />
+            {/* noiseIntensity 
+            scanlinesIntensity
+            scanlinesCount
+            grayscale  */}
         </effectComposer>
     );
 }
@@ -100,8 +105,8 @@ const WireframeGlow = () => {
                     args={[
                         new THREE.SphereBufferGeometry(
                             1,
-                            16,
-                            16,
+                            8,
+                            8,
                             0,
                             3,
                             // 0,
