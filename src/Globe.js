@@ -9,6 +9,7 @@ import {
     SphereGeometry,
     MeshStandardMaterial,
     MeshDepthMaterial,
+    CircleBufferGeometry,
 } from 'three';
 import React, { Suspense } from 'react';
 import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
@@ -17,6 +18,7 @@ import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
 import noiseUrl from './noise.jpg';
 
 extend({
+    CircleBufferGeometry,
     OrbitControls,
     EdgesGeometry,
     LineSegments,
@@ -52,7 +54,7 @@ function Effect() {
             <unrealBloomPass
                 attachArray="passes"
                 args={[aspect]}
-                strength={0.6}
+                strength={1}
                 radius={0.1}
                 threshold={0.3}
             />
@@ -109,10 +111,10 @@ const Ball = () => {
             mesh.current.scale.y = mesh.current.scale.y -= 0.0005;
             mesh.current.scale.z = mesh.current.scale.z -= 0.0005;
         }
-        if (mesh.current.scale.x >= 1.5) {
+        if (mesh.current.scale.x >= 2) {
             expanding = false;
         }
-        if (mesh.current.scale.x <= 0.9) {
+        if (mesh.current.scale.x <= 1) {
             expanding = true;
         }
     });
@@ -121,7 +123,7 @@ const Ball = () => {
         <mesh ref={mesh}>
             <sphereGeometry
                 attach="geometry"
-                args={[0.5, 32, 32]}
+                args={[0.25, 32, 32]}
 
                 // radius={10}
                 // widthSegments={32}
@@ -137,7 +139,7 @@ const Ball = () => {
                 emissive="red"
                 displacementMap={new THREE.TextureLoader().load(noiseUrl)}
                 displacementScale={0.2}
-                map={new THREE.TextureLoader().load(noiseUrl)}
+                // map={new THREE.TextureLoader().load(noiseUrl)}
             />
         </mesh>
     );
@@ -156,9 +158,10 @@ const Globe = () => {
                 }}
                 style={{ background: '#000' }}
             >
-                <ambientLight intensity={1} color="#fff" />
-                {/* <spotLight intensity={2.5} position={[1, -1, 5]} /> */}
-                position: [1, -1, 5],
+                <ambientLight intensity={0.5} color="#fff" />
+                <spotLight intensity={1.1} position={[1, -1, 5]} />
+
+                {/* Depth material attempt */}
                 <mesh>
                     <sphereBufferGeometry
                         attach="geometry"
@@ -170,34 +173,44 @@ const Globe = () => {
                         color="white"
                         side={THREE.BackSide}
                     />
-                    {/* <meshLambertMaterial
-                        attach="material"
-                        color="white"
-                        side={THREE.BackSide}
-                    /> */}
                 </mesh>
-                <Ball />
-                {/* <edgesGeometry attach="geometry" args={geometry} /> */}
-                <mesh>
-                    <sphereBufferGeometry
-                        attach="geometry"
-                        args={[0.9, 32, 32, 0, 5]}
-                    />
-                    <meshLambertMaterial attach="material" color="white" />
 
-                    {/* <meshDepthMaterial attach="material" color="white" /> */}
-                </mesh>
+                {/* Spiky ball */}
+                <Ball />
+
+                {/* Outer ring */}
                 <mesh>
                     <sphereBufferGeometry
                         attach="geometry"
-                        args={[0.9, 32, 32, 0, 5]}
+                        args={[0.9, 32, 32, 2.5, 5]}
                     />
                     <meshLambertMaterial
                         attach="material"
-                        color="#920"
-                        side={THREE.BackSide}
+                        color="#c00"
+                        emissive="#c00"
+                        // side={THREE.DoubleSide}
                     />
                 </mesh>
+
+                {/* Circles */}
+                <mesh position={[0, 0, 0]} rotation={[0, 1.2, 0]}>
+                    <circleBufferGeometry attach="geometry" args={[0.9, 32]} />
+                    <meshLambertMaterial
+                        attach="material"
+                        color="#920"
+                        side={THREE.DoubleSide}
+                    />
+                </mesh>
+                <mesh position={[0, 0, 0]} rotation={[0, 2.5, 0]}>
+                    <circleBufferGeometry attach="geometry" args={[0.9, 32]} />
+                    <meshLambertMaterial
+                        attach="material"
+                        color="#920"
+                        side={THREE.DoubleSide}
+                    />
+                </mesh>
+
+                {/* Core */}
                 <mesh>
                     <sphereBufferGeometry
                         emissive="#a42"
