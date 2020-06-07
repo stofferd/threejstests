@@ -16,6 +16,7 @@ import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
 import noiseUrl from './noise.jpg';
+import sunUrl from './sun-texture.jpg';
 
 extend({
     CircleBufferGeometry,
@@ -29,6 +30,9 @@ extend({
     MeshStandardMaterial,
     MeshDepthMaterial,
 });
+
+const sunTexture = new THREE.TextureLoader().load(sunUrl);
+const noiseTexture = new THREE.TextureLoader().load(noiseUrl);
 
 function Effect() {
     const composer = React.useRef();
@@ -54,7 +58,7 @@ function Effect() {
             <unrealBloomPass
                 attachArray="passes"
                 args={[aspect]}
-                strength={1}
+                strength={1.5}
                 radius={0.1}
                 threshold={0.3}
             />
@@ -137,9 +141,9 @@ const Ball = () => {
                 attach="material"
                 color="#fff"
                 emissive="red"
-                displacementMap={new THREE.TextureLoader().load(noiseUrl)}
+                displacementMap={noiseTexture}
                 displacementScale={0.2}
-                // map={new THREE.TextureLoader().load(noiseUrl)}
+                bumpMap={sunTexture}
             />
         </mesh>
     );
@@ -148,7 +152,6 @@ const Ball = () => {
 const Globe = () => {
     // const geometry = new THREE.SphereBufferGeometry(1, 10, 10, 0, 2);
     // const edges = new THREE.EdgesGeometry(geometry);
-
     return (
         <>
             <Canvas
@@ -158,7 +161,7 @@ const Globe = () => {
                 }}
                 style={{ background: '#000' }}
             >
-                <ambientLight intensity={0.5} color="#fff" />
+                <ambientLight intensity={0.8} color="#fff" />
                 <spotLight intensity={1.1} position={[1, -1, 5]} />
 
                 {/* Depth material attempt */}
@@ -184,17 +187,36 @@ const Globe = () => {
                         attach="geometry"
                         args={[0.9, 32, 32, 2.5, 5]}
                     />
-                    <meshLambertMaterial
+                    <meshStandardMaterial
                         attach="material"
-                        color="#c00"
-                        emissive="#c00"
-                        // side={THREE.DoubleSide}
+                        color="#c55"
+                        emissive="#700"
+                        map={sunTexture}
+                        bumpMap={sunTexture}
                     />
                 </mesh>
 
                 {/* Circles */}
-                <mesh position={[0, 0, 0]} rotation={[0, 1.2, 0]}>
+                <mesh position={[-0.001, 0, 0]} rotation={[0, 1.2, 0]}>
                     <circleBufferGeometry attach="geometry" args={[0.9, 32]} />
+                    <meshStandardMaterial
+                        attach="material"
+                        color="#811"
+                        // bumpMap={sunTexture}
+                        side={THREE.DoubleSide}
+                    />
+                </mesh>
+                <mesh position={[0.001, 0, 0]} rotation={[0, 2.5, 0]}>
+                    <circleBufferGeometry attach="geometry" args={[0.9, 32]} />
+                    <meshStandardMaterial
+                        attach="material"
+                        color="#811"
+                        // bumpMap={sunTexture}
+                        side={THREE.DoubleSide}
+                    />
+                </mesh>
+                <mesh position={[0, 0, 0]} rotation={[0, 1.2, 0]}>
+                    <circleBufferGeometry attach="geometry" args={[0.8, 32]} />
                     <meshLambertMaterial
                         attach="material"
                         color="#920"
@@ -202,7 +224,7 @@ const Globe = () => {
                     />
                 </mesh>
                 <mesh position={[0, 0, 0]} rotation={[0, 2.5, 0]}>
-                    <circleBufferGeometry attach="geometry" args={[0.9, 32]} />
+                    <circleBufferGeometry attach="geometry" args={[0.8, 32]} />
                     <meshLambertMaterial
                         attach="material"
                         color="#920"
