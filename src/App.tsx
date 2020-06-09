@@ -10,6 +10,7 @@ import Terrain from './Terrain';
 import Globe from './Globe';
 import Knot from './Knot';
 import WireframeGlow from './WireframeGlow';
+import Eye from './Eye';
 
 function App() {
     return (
@@ -35,11 +36,14 @@ function App() {
                         <Link to="/globe">Globe</Link>
                     </li>
                     <li>
-                        <Link to="/knot">Knot</Link>
+                        <Link to="/knot">Knot (outline shader)</Link>
                     </li>
                     <li>
                         <Link to="/wireframe-glow">WireframeGlow</Link>
                     </li>
+                    {/* <li>
+                        <Link to="/eye">eye</Link>
+                    </li> */}
                 </ul>
 
                 <hr />
@@ -65,6 +69,9 @@ function App() {
                     </Route>
                     <Route path="/knot">
                         <Knot />
+                    </Route>
+                    <Route path="/eye">
+                        <Eye />
                     </Route>
                     <Route path="/wireframe-glow">
                         <WireframeGlow />

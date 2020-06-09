@@ -11,10 +11,14 @@ import {
     MeshDepthMaterial,
     CircleBufferGeometry,
 } from 'three';
+import * as Nodes from 'three/examples/jsm/nodes/Nodes.js';
+import { ColorAdjustmentNode } from 'three/examples/jsm/nodes/effects/ColorAdjustmentNode';
 import React, { Suspense } from 'react';
 import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
+import { DotScreenShader } from 'three/examples/jsm/shaders/DotScreenShader';
+
 import noiseUrl from './noise.jpg';
 import sunUrl from './sun-texture.jpg';
 
@@ -29,12 +33,14 @@ extend({
     SphereGeometry,
     MeshStandardMaterial,
     MeshDepthMaterial,
+    ColorAdjustmentNode,
 });
 
 const sunTexture = new THREE.TextureLoader().load(sunUrl);
 const noiseTexture = new THREE.TextureLoader().load(noiseUrl);
 
 function Effect() {
+    const dotRef = React.useRef(null);
     const composer = React.useRef();
     const { scene, gl, size, camera } = useThree();
     const aspect = React.useMemo(
@@ -46,7 +52,7 @@ function Effect() {
         [size],
     );
     useFrame(() => composer.current.render(), 1);
-
+    console.log({ dotRef });
     return (
         <effectComposer ref={composer} args={[gl]}>
             <renderPass
@@ -62,19 +68,27 @@ function Effect() {
                 radius={0.1}
                 threshold={0.3}
             />
-            {/* <shaderPass
+
+            <shaderPass
+                ref={dotRef}
                 attachArray="passes"
-                args={[FXAAShader]}
-                color="0x00ff00"
-                uniforms-resolution-value={[
-                    window.innerWidth * window.devicePixelRatio,
-                    window.innerHeight * window.devicePixelRatio,
-                ]}
-                // uniforms-edgeIntensity={0.1}
-                // uniforms={{ bIntensity: 0.5 }}
+                args={[DotScreenShader]}
                 renderToScreen
-            /> */}
+                // uniforms-tDiffuse={0.00001}
+                uniforms-tSize-value-x={512}
+                uniforms-tSize-value-y={512}
+                // uniforms-tDiffuse-value={0.01}
+                // uniforms-angle-value={300}
+                // uniforms-scale={0.00001}
+            />
             <filmPass attachArray="passes" args={[0.25, 1, 1500, false]} />
+
+            {/* uniforms: {
+		tDiffuse: Uniform;
+		tSize: Uniform;
+		center: Uniform;
+		angle: Uniform;
+		scale: Uniform; */}
             {/* noiseIntensity 
             scanlinesIntensity
             scanlinesCount
@@ -159,13 +173,13 @@ const Globe = () => {
                     fov: 75,
                     position: [1, -1, 5],
                 }}
-                style={{ background: '#000' }}
+                style={{ background: '#045' }}
             >
                 <ambientLight intensity={0.8} color="#fff" />
                 <spotLight intensity={1.1} position={[1, -1, 5]} />
 
                 {/* Depth material attempt */}
-                <mesh>
+                {/* <mesh>
                     <sphereBufferGeometry
                         attach="geometry"
                         args={[4, 32, 32]}
@@ -176,7 +190,7 @@ const Globe = () => {
                         color="white"
                         side={THREE.BackSide}
                     />
-                </mesh>
+                </mesh> */}
 
                 {/* Spiky ball */}
                 <Ball />
