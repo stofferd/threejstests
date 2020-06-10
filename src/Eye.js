@@ -5,21 +5,18 @@ import {
     EdgesGeometry,
     MeshPhongMaterial,
     SphereBufferGeometry,
-    MeshLambertMaterial,
     SphereGeometry,
     MeshStandardMaterial,
     MeshDepthMaterial,
     CircleBufferGeometry,
 } from 'three';
-import * as Nodes from 'three/examples/jsm/nodes/Nodes.js';
 import { ColorAdjustmentNode } from 'three/examples/jsm/nodes/effects/ColorAdjustmentNode';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { Canvas, extend, useFrame, useThree } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
 import { DotScreenShader } from 'three/examples/jsm/shaders/DotScreenShader';
+import { useSpring, a } from 'react-spring/three';
 
-import noiseUrl from './noise.jpg';
 import sunUrl from './sun-texture.jpg';
 import veinUrl from './veins.jpg';
 
@@ -38,7 +35,6 @@ extend({
 });
 
 const sunTexture = new THREE.TextureLoader().load(sunUrl);
-const noiseTexture = new THREE.TextureLoader().load(noiseUrl);
 const veinTexture = new THREE.TextureLoader().load(veinUrl);
 
 function Effect() {
@@ -54,7 +50,7 @@ function Effect() {
         [size],
     );
     useFrame(() => composer.current.render(), 1);
-    console.log({ dotRef });
+
     return (
         <effectComposer ref={composer} args={[gl]}>
             <renderPass
@@ -84,38 +80,33 @@ function Effect() {
                 // uniforms-angle-value={300}
                 // uniforms-scale={0.00001}
             />
-
-            {/* uniforms: {
-		tDiffuse: Uniform;
-		tSize: Uniform;
-		center: Uniform;
-		angle: Uniform;
-		scale: Uniform; */}
-            {/* noiseIntensity 
-            scanlinesIntensity
-            scanlinesCount
-            grayscale  */}
         </effectComposer>
     );
 }
 
-const MouseMove = ({ eye }) => {
-    const { camera, gl } = useThree();
-
-    useFrame(({ mouse }) => {
-        console.log(mouse);
-        console.log(eye);
-
-        eye.current.rotation.x = -mouse.y;
-        eye.current.rotation.y = mouse.x;
-    });
-    return null;
-};
-
 const Eye = () => {
-    // const geometry = new THREE.SphereBufferGeometry(1, 10, 10, 0, 2);
-    // const edges = new THREE.EdgesGeometry(geometry);
-    const eyeRef = React.useRef(null);
+    const [{ rotation }, set] = useSpring(() => ({
+        config: {
+            mass: 1,
+            tension: 170,
+            friction: 26,
+        },
+        rotation: [0, 0, 0],
+    }));
+
+    const onMouseMove = React.useCallback(
+        ({ clientX: x, clientY: y }) => {
+            set({
+                rotation: [
+                    (y - window.innerHeight / 2) / (window.innerHeight / 2),
+                    (x - window.innerWidth / 2) / (window.innerWidth / 2),
+                    0,
+                ],
+            });
+        },
+        [set],
+    );
+
     return (
         <>
             <Canvas
@@ -123,14 +114,12 @@ const Eye = () => {
                     fov: 75,
                     position: [0, 0, 5],
                 }}
+                onMouseMove={onMouseMove}
                 style={{ background: '#045' }}
             >
                 <ambientLight intensity={0.8} color="#fff" />
-                {/* <spotLight intensity={0.9} position={[0, 0, 20]} /> */}
-                {/* <spotLight intensity={1.1} position={[10, 10, -20]} /> */}
 
-                <group ref={eyeRef}>
-                    {/* eyeball */}
+                <a.group rotation={rotation}>
                     <mesh>
                         <sphereBufferGeometry
                             attach="geometry"
@@ -139,9 +128,7 @@ const Eye = () => {
                         <meshStandardMaterial
                             attach="material"
                             color="#999"
-                            // emissive="#ccc"
                             map={veinTexture}
-                            // bumpMap={sunTexture}
                         />
                     </mesh>
 
@@ -171,7 +158,7 @@ const Eye = () => {
                             side={THREE.DoubleSide}
                         />
                     </mesh>
-                </group>
+                </a.group>
 
                 <mesh position={[0, 0, -1]}>
                     <circleBufferGeometry attach="geometry" args={[1.15, 32]} />
@@ -182,7 +169,6 @@ const Eye = () => {
                     />
                 </mesh>
 
-                <MouseMove eye={eyeRef} />
                 <Effect />
             </Canvas>
         </>
